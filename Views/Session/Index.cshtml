@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Cinema.Models.Session>
+
+@{
+    ViewData["Title"] = "Sessões";
+}
+
+
+<div class="row">
+    <div class="col-md-12"><h1>Sessões |<a asp-action="Create" class="btn btn-link pl-2">ADICIONAR  <i class="fas fa-plus"></i></a></h1></div>
+</div>
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Start)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.End)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AnimationType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Audio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Room)
+            </th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var formatedDate = item.Date.ToString("dd/MM/yyyy");
+            var animationType = ViewBag.AnimationTypes.GetValue(item.AnimationType);
+            var audio = ViewBag.Audios.GetValue(item.Audio);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => formatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Start)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.End)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketValue)
+                </td>
+                <td>
+                    @animationType
+                </td>
+                <td>
+                    @audio
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Movie.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Room.Name)
+                </td>
+                <td class="text-center">
+                    <a asp-action="Details" asp-route-id="@item.SessionId" data-bs-toggle="tooltip" data-bs-placement="left" title="Visualizar"><i class="far fa-eye"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.SessionId" data-bs-toggle="tooltip" data-bs-placement="left" title="Deletar"><i class="far fa-trash-alt"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

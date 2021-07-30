@@ -1,0 +1,7 @@
+﻿<form asp-area="" asp-controller="Account" asp-action="Logout" id="logoutForm"
+      method="post" class="navbar-left">
+    <ul class="nav navbar-nav navbar-left">
+        @User.Identity.Name
+        <a class="text-white" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-sign-out-alt pr-2"></i> Sair</a>
+    </ul>
+</form>

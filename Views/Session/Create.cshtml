@@ -1,0 +1,151 @@
+﻿@model Cinema.Models.Session
+
+@{
+    ViewData["Title"] = "Sessões | Criar";
+}
+
+<h1>Sessões</h1>
+
+<h4>Criar</h4>
+<hr />
+<div class="row">
+    <div class="col-xl-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="None" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                @*<span asp-validation-for="Date" class="text-danger"></span>*@
+                @*@Html.ValidationMessageFor(s => s.Date, "teste", new { @class = "text-danger" })*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Start" class="control-label"></label>
+                <input asp-for="Start" class="form-control" />
+                @*<span asp-validation-for="Start" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="TicketValue" class="control-label"></label>
+                <input asp-for="TicketValue" class="form-control" />
+                @*<span asp-validation-for="TicketValue" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="AnimationType" class="control-label"></label>
+                <select asp-for="AnimationType" class="form-control" asp-items="ViewBag.AnimationType"></select>
+                @*<span asp-validation-for="AnimationType" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Audio" class="control-label"></label>
+                <select asp-for="Audio" class="form-control" asp-items="ViewBag.Audio"></select>
+                @*<span asp-validation-for="Audio" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieId" class="control-label"></label>
+                <select asp-for="MovieId" class="form-control" asp-items="ViewBag.MovieId" asp-></select>
+                @foreach(Movie movie in @ViewBag.Movies)
+                {
+                    <input type="hidden" id="movie-duration-@movie.MovieId" value="@movie.Duration" />
+                } 
+            </div>
+            @*<div class="form-group">
+            <label asp-for="RoomId" class="control-label"></label>
+            <select asp-for="RoomId" class="form-control" disabled asp-items="ViewBag.RoomId"></select>
+            </div>*@
+        <div class="form-group">
+            <p class="mb-2">Sala</p>
+            <div class="alert alert-info" role="alert">
+                As <b>salas</b> só ficam <u>disponíveis</u> para seleção ao preencher corretamente <b>Data</b>, <b>Hora de Início</b> e <b>Filme</b>.
+            </div>
+            <div class="form-check form-check-inline">
+                <span asp-validation-for="RoomId" class="text-danger"></span>
+                @foreach (Room room in @ViewBag.Rooms)
+                {
+                    <input type="radio" class="btn-check" name="RoomId" id="@room.RoomId" autocomplete="off" value="@room.RoomId" disabled>
+                    <label class="btn btn-secondary disabled" name="RoomIdLabel" for="@room.RoomId">@room.Name</label>
+                }
+            </div>
+        </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="End" />
+                <input type="submit" value="Criar" id="btn-submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar a lista de Sessões</a>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            verifyFormErrors()
+        })
+
+        let inputRoomId = $("input[name='RoomId']")
+        let labelRoomId = $("label[name='RoomIdLabel']")
+
+        $('#Start, #Date, #MovieId').on('change', function () {
+            inputRoomId.prop('disabled', true)
+            labelRoomId.addClass('disabled')
+            $("#btn-submit").prop('disabled', true)
+        })
+
+        $('#Start, #Date, #MovieId').on('focusout', function () {
+            if (isValidSession()) {
+                $("#btn-submit").removeAttr("disabled")
+                $.ajax({
+                    url: './GetUnavailableRooms',
+                    type: 'GET',
+                    data: {
+                        Date: $("#Date").val(),
+                        Start: $("#Start").val(),
+                        Duration: $("#movie-duration-" + $("#MovieId").val() + "").val()
+                    },
+                    datatype: 'json',
+                    success: function (result) {
+                        console.log(1)
+                        inputRoomId.removeAttr('disabled');
+                        labelRoomId.removeClass('disabled');
+                        $("#btn-submit").removeAttr('disabled')
+                        if (result.length) {
+                            console.log(2)
+                            $.each(result, function () {
+                                console.log(3)
+                                $("input[name='RoomId'][id='" + this.roomId + "']").attr('disabled', true).prop('pointer-events', 'none');;
+                                $("label[for='" + this.roomId + "']").addClass('disabled');
+                            })
+                        }                       
+
+                    }
+                });
+            }
+        })
+
+        var isValidSession = function () {
+            let validated = false
+            if ($("#Date").val().length == 10 && $("#Start").val().length == 5 && $("#MovieId").val() > 0)
+                validated = true            
+            return validated
+        }
+
+        var verifyFormErrors = function () {
+            if ($("span[class*='field-validation-error']").length) {
+                let element = $("span[class*='field-validation-error']")
+                element.html('')
+                element.closest('div').addClass('radio-error')
+            }
+            if ($(".input-validation-error").length) {
+                $('<div/>', {
+                    "class": "alert alert-danger",
+                    "role": "alert",
+                    html: 'O formulário contém erros, favor corrigir as marcações em vermelho.'
+                }).appendTo("div[class='text-danger']")
+            } else {
+                $("div[class='text-danger']").remove()
+            }
+        }
+
+    </script>
+}

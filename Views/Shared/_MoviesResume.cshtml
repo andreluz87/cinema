@@ -1,0 +1,12 @@
+﻿@model Movie
+
+<div class="col-lg-2 col-md-3 col-sm-4">
+    <a class="" asp-area="" asp-controller="Movie" asp-action="View">
+        <div class="card" style="width: 18rem;">
+            <img src="~/imgs/@Model.Image" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title text-center">@Model.Title</h5>
+            </div>
+        </div>
+    </a>
+</div>
