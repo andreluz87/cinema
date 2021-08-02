@@ -13,10 +13,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Cinema.Controllers
 {
     [Authorize]
+
     public class MovieController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly string[] _fileTypes = { "image/jpeg" };
+        private readonly string[] _fileTypes = { "image/jpeg", "image/png", "image/gif" };
 
         public MovieController(AppDbContext context)
         {
@@ -63,7 +64,7 @@ namespace Cinema.Controllers
 
         // POST: Movies/Create
         [HttpPost, DisableRequestSizeLimit]
-        public async Task<IActionResult> Create([Bind("MovieId,Title,Description,Image,Duration")] MoviesViewModel movie)
+        public async Task<IActionResult> Create([Bind("MovieId,Title,Description,Image,Duration")] Movie movie)
         {
             var _movie = movie;
 
@@ -78,7 +79,7 @@ namespace Cinema.Controllers
             {
                 if (!MovieExistsByTitle(_movie.Title)){
                     AddImageToMovie(_movie);
-                    if (ModelState.IsValid)
+                    if (TryValidateModel(_movie))
                     {
                         _context.Add(_movie);
                         await _context.SaveChangesAsync();
@@ -86,7 +87,7 @@ namespace Cinema.Controllers
                     }
                 }else
                 {
-                    ModelState.AddModelError("Title", "Desculpe, o Título    escolhido para o filme já existe.");
+                    ModelState.AddModelError("Title", "Desculpe, o Título escolhido para o filme já existe.");
                 }
             }
             return View(_movie);
@@ -111,26 +112,36 @@ namespace Cinema.Controllers
         // POST: Movies/Edit/5
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("MovieId,Title,Image,Description,Duration,ImageOld")] MoviesViewModel movie)
+        public async Task<IActionResult> Edit(int id, [Bind("MovieId,Title,Image,Description,Duration,ImageHidden")] MoviesViewModel movie)
         {
-            if (id != movie.MovieId)
+            var _movie = movie;
+            if (id != _movie.MovieId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if(_movie.ImageHidden.Length > 0 && _movie.Image == null)
+            {   
+                _movie.Image = _movie.ImageHidden;
+                ModelState.Clear();
+            }
+
+            if (TryValidateModel(_movie))
             {
                 try
                 {
-                    //DeleteImageFile(movie.Image);
-                    //AddImageToMovie(movie);
-                    
-                    _context.Update(movie);
+                    var requestFormFiles = Request.Form;
+                    if (requestFormFiles.Files.Count > 0 && requestFormFiles.Files[0].FileName != _movie.ImageHidden)
+                    {
+                        DeleteImageFile(_movie.Image);
+                        AddImageToMovie(_movie);
+                    }                                        
+                    _context.Update(_movie);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MovieExists(movie.MovieId))
+                    if (!MovieExists(_movie.MovieId))
                     {
                         return NotFound();
                     }
@@ -141,7 +152,7 @@ namespace Cinema.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(movie);
+            return View(_movie);
         }
 
         // GET: Movies/Delete/5
@@ -184,7 +195,7 @@ namespace Cinema.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public void AddImageToMovie(MoviesViewModel movie)
+        public void AddImageToMovie(Movie movie)
         {
             var _requestForm = Request.Form;
 
@@ -197,12 +208,15 @@ namespace Cinema.Controllers
                     {
                         //TODO Criar pasta com o MovieId
                         var folderName = Path.Combine("wwwroot", "imgs/Movies/");
-                        var fileName = ContentDispositionHeaderValue.Parse(_file.ContentDisposition).FileName.Trim('"');
+                        var randomNumber = new Random();
+                        var fileName = Path.GetRandomFileName() + movie.MovieId  + ContentDispositionHeaderValue.Parse(_file.ContentDisposition).FileName.Trim('"');
                         var dbPath = Path.Combine(folderName, fileName);
+
                         using (var stream = new FileStream(dbPath, FileMode.Create))
                         {
                             _file.CopyTo(stream);
                             System.IO.File.Exists(dbPath);
+                            movie.Image = fileName;
                         }
                     }
                     else

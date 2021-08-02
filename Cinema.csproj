@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Errors\" />
     <Folder Include="wwwroot\imgs\Movies\" />
   </ItemGroup>
 

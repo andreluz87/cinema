@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MovieId" />
             <div class="form-group">
@@ -23,8 +23,8 @@
                 <div class="has-image mb-2">
                     <img id="image-file" src="/imgs/Movies/@Model.Image" class="bd-placeholer-img flex-shrink-0 me-2 rounded" width="230" height="250" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" />
                     <div id="btn-change-img" class="btn btn-danger btn-change">Alterar</div>
-                    <input asp-for="Image" type="file" class="custom-file-input invisible" runat="server" />
-                    <input type="hidden" id="ImageOld" value="@Model.Image" runat="server" />
+                    <input asp-for="Image" type="file" class="custom-file-input invisible" runat="server" accept="image/*" />
+                    <input type="hidden" name="ImageHidden" id="ImageHidden" runat="server" value="@Model.Image" />
                 </div>
             </div>
             <div class="form-group">

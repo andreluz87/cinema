@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Cinema.Context;
 using Cinema.Models;
 using Cinema.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.Controllers
 {
+    [Authorize]
+
     public class SessionController : Controller
     {
         private readonly AppDbContext _context;

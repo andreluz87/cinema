@@ -8,6 +8,6 @@ namespace Cinema.ViewModels
 {
     public class MoviesViewModel : Movie
     {
-        public string ImageOld { get; set; }
+        public string ImageHidden { get; set; }
     }
 }

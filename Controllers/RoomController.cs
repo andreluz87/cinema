@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cinema.Context;
 using Cinema.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.Controllers
 {
+    [Authorize]
+
     public class RoomController : Controller
     {
         private readonly AppDbContext _context;

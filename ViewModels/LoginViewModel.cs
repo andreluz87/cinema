@@ -8,10 +8,11 @@ namespace Cinema.ViewModels
 {
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Usuário óbrigatório.")]
+        [DataType(DataType.Text)]
         [Display(Name = "Usuário")]
         public string UserName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Senha óbrigatória.")]
         [DataType(DataType.Password)]
         [Display(Name = "Senha")]
         public string Password { get; set; }

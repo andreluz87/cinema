@@ -45,7 +45,7 @@ namespace Cinema.Controllers
                 {
                     if (string.IsNullOrEmpty(loginVM.ReturnUrl))
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Movie");
                     }
                     return Redirect(loginVM.ReturnUrl);
                 }
@@ -72,7 +72,7 @@ namespace Cinema.Controllers
             }
             await _signInManager.SignOutAsync();
             HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
     }
