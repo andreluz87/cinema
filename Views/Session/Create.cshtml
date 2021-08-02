@@ -9,64 +9,66 @@
 <h4>Criar</h4>
 <hr />
 <div class="row">
-    <div class="col-xl-6">
+    <div class="col-lg-5">
         <form asp-action="Create">
             <div asp-validation-summary="None" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                @*<span asp-validation-for="Date" class="text-danger"></span>*@
-                @*@Html.ValidationMessageFor(s => s.Date, "teste", new { @class = "text-danger" })*@
-            </div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                @*<span asp-validation-for="Start" class="text-danger"></span>*@
-            </div>
-            <div class="form-group">
-                <label asp-for="TicketValue" class="control-label"></label>
-                <input asp-for="TicketValue" class="form-control" />
-                @*<span asp-validation-for="TicketValue" class="text-danger"></span>*@
-            </div>
-            <div class="form-group">
-                <label asp-for="AnimationType" class="control-label"></label>
-                <select asp-for="AnimationType" class="form-control" asp-items="ViewBag.AnimationType"></select>
-                @*<span asp-validation-for="AnimationType" class="text-danger"></span>*@
-            </div>
-            <div class="form-group">
-                <label asp-for="Audio" class="control-label"></label>
-                <select asp-for="Audio" class="form-control" asp-items="ViewBag.Audio"></select>
-                @*<span asp-validation-for="Audio" class="text-danger"></span>*@
+                <div class="row">
+                    <div class="col-lg-8">
+                        <label asp-for="Date" class="control-label"></label>
+                        <input asp-for="Date" class="form-control" />
+                    </div>
+                    <div class="col-lg-4">
+                        <label asp-for="Start" class="control-label"></label>
+                        <input asp-for="Start" class="form-control" />
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="MovieId" class="control-label"></label>
                 <select asp-for="MovieId" class="form-control" asp-items="ViewBag.MovieId" asp-></select>
-                @foreach(Movie movie in @ViewBag.Movies)
+                @foreach (Movie movie in @ViewBag.Movies)
                 {
                     <input type="hidden" id="movie-duration-@movie.MovieId" value="@movie.Duration" />
-                } 
-            </div>
-            @*<div class="form-group">
-            <label asp-for="RoomId" class="control-label"></label>
-            <select asp-for="RoomId" class="form-control" disabled asp-items="ViewBag.RoomId"></select>
-            </div>*@
-        <div class="form-group">
-            <p class="mb-2">Sala</p>
-            <div class="alert alert-info" role="alert">
-                As <b>salas</b> só ficam <u>disponíveis</u> para seleção ao preencher corretamente <b>Data</b>, <b>Hora de Início</b> e <b>Filme</b>.
-            </div>
-            <div class="form-check form-check-inline">
-                <span asp-validation-for="RoomId" class="text-danger"></span>
-                @foreach (Room room in @ViewBag.Rooms)
-                {
-                    <input type="radio" class="btn-check" name="RoomId" id="@room.RoomId" autocomplete="off" value="@room.RoomId" disabled>
-                    <label class="btn btn-secondary disabled" name="RoomIdLabel" for="@room.RoomId">@room.Name</label>
                 }
             </div>
-        </div>
             <div class="form-group">
-                <input type="hidden" asp-for="End" />
-                <input type="submit" value="Criar" id="btn-submit" class="btn btn-primary" />
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label asp-for="TicketValue" class="control-label"></label>
+                        <input asp-for="TicketValue" class="form-control" data-prefix="R$" data-thousands="." data-decimal="," data-affixes-stay="false" placeholder="R$0,00" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label asp-for="AnimationType" class="control-label"></label>
+                        <select asp-for="AnimationType" class="form-control" asp-items="ViewBag.AnimationType"></select>
+                    </div>
+                    <div class="col-lg-6">
+                        <label asp-for="Audio" class="control-label"></label>
+                        <select asp-for="Audio" class="form-control" asp-items="ViewBag.Audio"></select>
+                    </div>
+                </div>
+            </div>            
+            <div class="form-group mb-0">
+                <p class="mb-2">Sala</p>
+                <div class="alert alert-info" role="alert">
+                    As <b>salas</b> só ficam <u>disponíveis</u> para seleção ao preencher corretamente <b>Data</b>, <b>Hora de Início</b> e <b>Filme</b>.
+                </div>
+                <div class="form-check form-check-inline">
+                    <span asp-validation-for="RoomId" class="text-danger"></span>
+                    @foreach (Room room in @ViewBag.Rooms)
+                    {
+                        <input type="radio" class="btn-check" name="RoomId" id="@room.RoomId" autocomplete="off" value="@room.RoomId" disabled>
+                        <label class="btn btn-secondary disabled" name="RoomIdLabel" for="@room.RoomId">@room.Name</label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="d-flex flex-row-reverse">
+                    <div>
+                        <input type="hidden" asp-for="End" />
+                        <input type="submit" value="Criar" id="btn-submit" class="btn btn-primary btn-submit" />
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -80,6 +82,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $("#TicketValue").maskMoney();
             verifyFormErrors()
         })
 
@@ -92,7 +95,7 @@
             $("#btn-submit").prop('disabled', true)
         })
 
-        $('#Start, #Date, #MovieId').on('focusout', function () {
+        $('#Start, #Date, #MovieId').on('change', function () {
             if (isValidSession()) {
                 $("#btn-submit").removeAttr("disabled")
                 $.ajax({
@@ -105,18 +108,17 @@
                     },
                     datatype: 'json',
                     success: function (result) {
-                        console.log(1)
-                        inputRoomId.removeAttr('disabled');
-                        labelRoomId.removeClass('disabled');
-                        $("#btn-submit").removeAttr('disabled')
-                        if (result.length) {
-                            console.log(2)
-                            $.each(result, function () {
-                                console.log(3)
-                                $("input[name='RoomId'][id='" + this.roomId + "']").attr('disabled', true).prop('pointer-events', 'none');;
-                                $("label[for='" + this.roomId + "']").addClass('disabled');
-                            })
-                        }                       
+                        $(".alert-info").fadeOut(400, function () {
+                            inputRoomId.removeAttr('disabled');
+                            labelRoomId.removeClass('disabled');
+                            $("#btn-submit").removeAttr('disabled')
+                            if (result.length) {
+                                $.each(result, function () {
+                                    $("input[name='RoomId'][id='" + this.roomId + "']").attr('disabled', true).prop('pointer-events', 'none');;
+                                    $("label[for='" + this.roomId + "']").addClass('disabled');
+                                })
+                            }
+                        });                        
 
                     }
                 });
@@ -126,7 +128,7 @@
         var isValidSession = function () {
             let validated = false
             if ($("#Date").val().length == 10 && $("#Start").val().length == 5 && $("#MovieId").val() > 0)
-                validated = true            
+                validated = true
             return validated
         }
 
@@ -145,7 +147,7 @@
             } else {
                 $("div[class='text-danger']").remove()
             }
-        }
+        }      
 
     </script>
 }

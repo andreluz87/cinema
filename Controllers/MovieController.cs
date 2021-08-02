@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cinema.Context;
 using Cinema.Models;
+using Cinema.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -62,53 +63,27 @@ namespace Cinema.Controllers
 
         // POST: Movies/Create
         [HttpPost, DisableRequestSizeLimit]
-        public async Task<IActionResult> Create([Bind("MovieId,Title,Description,Image,Duration")] Movie movie)
+        public async Task<IActionResult> Create([Bind("MovieId,Title,Description,Image,Duration")] MoviesViewModel movie)
         {
-            //upload de imagem
-            var _requestForm = Request.Form;
             var _movie = movie;
 
-            if (_requestForm.Files.Count > 0)
+            var requestFormFiles  = Request.Form.Files;
+            if(requestFormFiles.Count > 0)
             {
-                try
-                {
-                    var _file = _requestForm.Files[0];
-                    if (_fileTypes.Contains(_file.ContentType))
-                    {
-                        //TODO Criar pasta com o MovieId
-                        var folderName = Path.Combine("wwwroot", "imgs/Movies/");
-                        var fileName = ContentDispositionHeaderValue.Parse(_file.ContentDisposition).FileName.Trim('"');
-                        var dbPath = Path.Combine(folderName, fileName);
-                        using (var stream = new FileStream(dbPath, FileMode.Create))
-                        {
-                            _file.CopyTo(stream);
-                            //forma implicita do System.IO que nao estava encontrando o 'File';
-                            if(System.IO.File.Exists(dbPath))
-                            {
-                                ModelState.Clear();
-                                _movie.Image = fileName;
-                                TryValidateModel(_movie);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Image", "Desculpe, não foi encontrado nenhum tipo de imagem permitida.");
-                    }
-                }
-                catch(Exception ex)
-                {
-                    ModelState.AddModelError("Image", "Ocorreu um erro ao realizar o upload do arquivo, tente novamente mais tarde..");
-                }           
+                _movie.Image = requestFormFiles[0].FileName;
+                ModelState.Clear();
             }
 
-            if (ModelState.IsValid)
+            if (TryValidateModel(_movie))
             {
                 if (!MovieExistsByTitle(_movie.Title)){
-                    
-                    _context.Add(_movie);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    AddImageToMovie(_movie);
+                    if (ModelState.IsValid)
+                    {
+                        _context.Add(_movie);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
                 }else
                 {
                     ModelState.AddModelError("Title", "Desculpe, o Título    escolhido para o filme já existe.");
@@ -136,7 +111,7 @@ namespace Cinema.Controllers
         // POST: Movies/Edit/5
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("MovieId,Title,Image,Description,Duration")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("MovieId,Title,Image,Description,Duration,ImageOld")] MoviesViewModel movie)
         {
             if (id != movie.MovieId)
             {
@@ -147,6 +122,9 @@ namespace Cinema.Controllers
             {
                 try
                 {
+                    //DeleteImageFile(movie.Image);
+                    //AddImageToMovie(movie);
+                    
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
@@ -204,6 +182,39 @@ namespace Cinema.Controllers
                 return View(movie);
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public void AddImageToMovie(MoviesViewModel movie)
+        {
+            var _requestForm = Request.Form;
+
+            if (_requestForm.Files.Count > 0)
+            {
+                try
+                {
+                    var _file = _requestForm.Files[0];
+                    if (_fileTypes.Contains(_file.ContentType))
+                    {
+                        //TODO Criar pasta com o MovieId
+                        var folderName = Path.Combine("wwwroot", "imgs/Movies/");
+                        var fileName = ContentDispositionHeaderValue.Parse(_file.ContentDisposition).FileName.Trim('"');
+                        var dbPath = Path.Combine(folderName, fileName);
+                        using (var stream = new FileStream(dbPath, FileMode.Create))
+                        {
+                            _file.CopyTo(stream);
+                            System.IO.File.Exists(dbPath);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Image", "Desculpe, não foi encontrado nenhum tipo de imagem permitida.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("Image", "Ocorreu um erro ao realizar o upload do arquivo, tente novamente mais tarde.");
+                }
+            }
         }
 
         public bool DeleteImageFile(string fileName)

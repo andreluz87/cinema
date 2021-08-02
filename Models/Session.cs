@@ -23,6 +23,7 @@ namespace Cinema.Models
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Valor do Ingresso")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:c}")]
+        [DataType(DataType.Currency)]
         public decimal TicketValue { get; set; }
 
         //2D: 0, 3D: 1

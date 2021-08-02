@@ -1,1 +1,3 @@
-﻿alert("Hello! I am an alert box!!");
+﻿$(document).ready(function () {
+    $(":input").inputmask();
+});

@@ -43,11 +43,44 @@ label.btn {
     pointer-events: none;
 }
 
-    .btn-check:active + .btn-secondary, .btn-check:checked + .btn-secondary, .btn-secondary.active, .btn-secondary:active, .show > .btn-secondary.dropdown-toggle {
-        color: #fff;
-        background-color: #17a2b8 !important;
-        border-color: #51585e;
-    }
+.btn-submit {
+    padding: 0.50em 2em 0.50em 2em;
+}
+
+.has-image {
+    position: relative;
+    display: flex;
+}
+
+.has-image > img {
+    z-index: 0;
+}
+
+.btn-change {
+    position: absolute;
+    left: 9.3em;
+    bottom: 0.20em;
+    margin-left: 3px;
+    height: 2.55em;
+    z-index: 1;
+}
+
+.btn-change > i {
+    margin-left: -5px !important;
+    margin-top: 1px;
+    position:  absolute;
+}
+
+.no-image {
+    display: none;
+}
+
+/** BEGIN INPUT RADIO SELECT */
+.btn-check:active + .btn-secondary, .btn-check:checked + .btn-secondary, .btn-secondary.active, .btn-secondary:active, .show > .btn-secondary.dropdown-toggle{
+    color: #fff;
+    background-color: #17a2b8 !important;
+    border-color: #51585e;
+}
 
 .btn-secondary.disabled, .btn-secondary:disabled {
     color: #fff !important;
@@ -66,42 +99,46 @@ label.btn {
     margin-bottom: 0;
     width: 100%;
 }
+/** END INPUT RADIO SELECT */
 
 /** BEGIN INPUT FILE CUSTOM */
-
 .custom-file-input {
     opacity: initial !important;
     border: 1px solid #ced4da;
     border-radius: .25rem;
-    padding-left: 0.05em;
-    padding-top: 0.05em;
 }
 .custom-file-input::-webkit-file-upload-button {
     visibility: hidden;
 }
 
-    .custom-file-input::before {
-        content: 'Abrir';
-        display: inline-block;
-        background: #0062cc;
-        border: 1px solid #999;
-        border-radius: 3px;
-        padding: 5px 8px;
-        outline: none;
-        white-space: nowrap;
-        -webkit-user-select: none;
-        cursor: pointer;
-        font-weight: 400;
-        font-size: 10pt;
-        color: #fff
-    }
+.custom-file-input::before {
+    content: 'Abrir';
+    display: inline-block;
+    background: #0062cc;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 2em 5px 2em;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    font-weight: 400;
+    font-size: 10pt;
+    color: #fff;
+    margin-right: 0.10em;
+    margin-top: 0.10em;
+    position: absolute;
+    right: 0;
+}
 
 .custom-file-input:hover::before {
-    border-color: black;
+    background: #0069d9;
 }
 
 .custom-file-input:active::before {
     background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
 
+/*texto interno do input*/
+input[type="file"] {}
 /** END INPUT FILE CUSTOM */

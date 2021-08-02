@@ -6,8 +6,8 @@ using Cinema.Models;
 
 namespace Cinema.ViewModels
 {
-    public class MoviesListViewModel
+    public class MoviesViewModel : Movie
     {
-        public IEnumerable<Movie> Movies { get; set; }
+        public string ImageOld { get; set; }
     }
 }

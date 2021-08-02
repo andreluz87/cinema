@@ -1,12 +1,12 @@
 ﻿@model Cinema.Models.Movie
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Alterar";
 }
 
-<h1>Edit</h1>
+<h1>Filmes</h1>
 
-<h4>Movie</h4>
+<h4>Alterar</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,8 +20,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+                <div class="has-image mb-2">
+                    <img id="image-file" src="/imgs/Movies/@Model.Image" class="bd-placeholer-img flex-shrink-0 me-2 rounded" width="230" height="250" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" />
+                    <div id="btn-change-img" class="btn btn-danger btn-change">Alterar</div>
+                    <input asp-for="Image" type="file" class="custom-file-input invisible" runat="server" />
+                    <input type="hidden" id="ImageOld" value="@Model.Image" runat="server" />
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
@@ -34,13 +38,35 @@
                 <span asp-validation-for="Duration" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <div class="d-flex flex-row-reverse">
+                    <div>
+                        <a asp-action="Index" class="mr-2">Voltar</a><input type="submit" value="Salvar" id="btn-submit" class="btn btn-primary btn-submit" />
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts{
+    <script type="text/javascript">
 
+        let imageChange = function () {
+            $("#Image").trigger('click');
+        }
+
+        $("#Image").on('change', function () {
+            let input = this;
+            let selectedFiles = [...input.files];
+            if (selectedFiles.length > 0) {
+                $("#image-file").fadeOut(150, function () {
+                    $("#btn-change-img").hide();
+                    $(input).removeClass('invisible')
+                })
+            }
+        })
+
+        $("#btn-change-img").on("click", imageChange)
+
+    </script>
+}
