@@ -30,6 +30,7 @@ namespace Cinema.Controllers
 
             ViewBag.AnimationTypes = SessionViewModel.AnimationTypes;
             ViewBag.Audios = SessionViewModel.Audios;
+            ViewBag.MoviesCount = _context.Movies.Count();
 
             return View(await appDbContext.ToListAsync());
         }
