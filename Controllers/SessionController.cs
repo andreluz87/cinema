@@ -95,7 +95,9 @@ namespace Cinema.Controllers
             }
             ViewData["MovieId"] = new SelectList(_context.Movies, "MovieId", "Title", session.MovieId).Prepend(new SelectListItem { Text = "Selecione um filme", Value = "0" });
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "Name", session.RoomId);
-            ViewData["Rooms"] = _context.Rooms; 
+
+            ViewData["Rooms"] = _context.Rooms;
+            ViewData["Movies"] = _context.Movies;
 
             ViewBag.AnimationType = new SessionViewModel().AnimationTypeSelectList;
             ViewBag.Audio = new SessionViewModel().AudioSelectList;

@@ -47,13 +47,13 @@
                         <select asp-for="Audio" class="form-control" asp-items="ViewBag.Audio"></select>
                     </div>
                 </div>
-            </div>            
+            </div>
             <div class="form-group mb-0">
                 <p class="mb-2">Sala</p>
                 <div class="alert alert-info" role="alert">
                     As <b>salas</b> só ficam <u>disponíveis</u> para seleção ao preencher corretamente <b>Data</b>, <b>Hora de Início</b> e <b>Filme</b>.
                 </div>
-                <div class="form-check form-check-inline">
+                <div class="form-check form-check-inline mb-2">
                     <span asp-validation-for="RoomId" class="text-danger"></span>
                     @foreach (Room room in @ViewBag.Rooms)
                     {
@@ -118,7 +118,7 @@
                                     $("label[for='" + this.roomId + "']").addClass('disabled');
                                 })
                             }
-                        });                        
+                        });
 
                     }
                 });
@@ -133,21 +133,28 @@
         }
 
         var verifyFormErrors = function () {
+            let isValidForm = true;
+            let isValidRoom = false;
             if ($("span[class*='field-validation-error']").length) {
                 let element = $("span[class*='field-validation-error']")
                 element.html('')
                 element.closest('div').addClass('radio-error')
+                isValidRoom = true;
+                isValidForm = false;
             }
-            if ($(".input-validation-error").length) {
+            if ($(".input-validation-error").length || isValidRoom) {
                 $('<div/>', {
                     "class": "alert alert-danger",
                     "role": "alert",
                     html: 'O formulário contém erros, favor corrigir as marcações em vermelho.'
                 }).appendTo("div[class='text-danger']")
+                isValidForm = false;
             } else {
                 $("div[class='text-danger']").remove()
             }
-        }      
+            if (!isValidForm)
+                $("#MovieId").val(0).trigger('change')
+        }
 
     </script>
 }
